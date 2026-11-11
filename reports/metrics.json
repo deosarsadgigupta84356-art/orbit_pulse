@@ -1,0 +1,290 @@
+{
+  "dataset_metadata": {
+    "is_synthetic_fixture": true,
+    "dataset_version": "SYNTHETIC_CDM_FIXTURE_v1.0",
+    "total_raw_rows": 223,
+    "valid_rows": 222,
+    "quarantined_rows": 0,
+    "total_events": 40,
+    "eligible_events": 36,
+    "ineligible_events": 4
+  },
+  "chronological_split": {
+    "train_events": 21,
+    "val_events": 7,
+    "test_events": 8
+  },
+  "threshold_policy": {
+    "pc_threshold": 0.0001,
+    "selection_status": "FIXED_CONFIGURED_NOT_VALIDATION_SELECTED",
+    "reason": "Synthetic fixture is for pipeline/UI verification only; threshold tuning is deferred until an approved, sufficiently representative validation dataset is available."
+  },
+  "baseline_model": {
+    "name": "Last Eligible Pc Baseline",
+    "metrics": {
+      "mae_log10": 0.077,
+      "rmse_log10": 0.1149,
+      "median_ae_log10": 0.0566,
+      "classification": {
+        "threshold_log10": -4.0,
+        "threshold_pc": 0.0001,
+        "tp": 2,
+        "fp": 0,
+        "tn": 6,
+        "fn": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "pr_auc": 1.0
+      }
+    },
+    "pr_curve": {
+      "precision": [
+        0.25,
+        0.2857142857142857,
+        0.3333333333333333,
+        0.4,
+        0.5,
+        0.6666666666666666,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.5,
+        0.0
+      ],
+      "thresholds": [
+        -9.9369917201035,
+        -9.292319222308363,
+        -9.07166198649804,
+        -8.977542253152683,
+        -8.897357903667567,
+        -8.770612972269294,
+        -3.5297219962990103,
+        -3.0235383565505103
+      ]
+    },
+    "absolute_error_log10": [
+      0.12431751562604099,
+      0.0,
+      0.0931238429397716,
+      0.020064936949040657,
+      0.0,
+      0.25779648035538116,
+      0.12079666138790834,
+      0.0
+    ]
+  },
+  "trained_ml_model": {
+    "name": "HistGradientBoostingRegressor (Ablation D)",
+    "metrics": {
+      "mae_log10": 0.096,
+      "rmse_log10": 0.1115,
+      "median_ae_log10": 0.1098,
+      "classification": {
+        "threshold_log10": -4.0,
+        "threshold_pc": 0.0001,
+        "tp": 2,
+        "fp": 0,
+        "tn": 6,
+        "fn": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "pr_auc": 1.0
+      }
+    },
+    "pr_curve": {
+      "precision": [
+        0.25,
+        0.2857142857142857,
+        0.3333333333333333,
+        0.4,
+        0.5,
+        0.6666666666666666,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.5,
+        0.0
+      ],
+      "thresholds": [
+        -9.932073062521113,
+        -9.228042283441733,
+        -9.050433268427708,
+        -8.894406014378262,
+        -8.876067303604776,
+        -8.754917537887602,
+        -3.1561287507067304,
+        -3.137972180921525
+      ]
+    },
+    "absolute_error_log10": [
+      0.20745375440046132,
+      0.06427693886663022,
+      0.11441444300256265,
+      0.041293655019371656,
+      0.004918657582386743,
+      0.11579676523689875,
+      0.10510122700621594,
+      0.11443382437101457
+    ],
+    "relative_mae_improvement_pct": -24.68
+  },
+  "mandatory_ablations": {
+    "A_baseline_last_pc": {
+      "feature_columns": [
+        "last_eligible_pc_log"
+      ],
+      "feature_count": 1,
+      "metrics": {
+        "mae_log10": 0.077,
+        "rmse_log10": 0.1149,
+        "median_ae_log10": 0.0566,
+        "classification": {
+          "threshold_log10": -4.0,
+          "threshold_pc": 0.0001,
+          "tp": 2,
+          "fp": 0,
+          "tn": 6,
+          "fn": 0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "pr_auc": 1.0
+        }
+      }
+    },
+    "B_pc_history": {
+      "feature_columns": [
+        "last_eligible_pc_log",
+        "min_eligible_pc_log",
+        "max_eligible_pc_log",
+        "mean_eligible_pc_log",
+        "std_eligible_pc_log",
+        "eligible_message_count",
+        "pc_trend_slope"
+      ],
+      "feature_count": 7,
+      "metrics": {
+        "mae_log10": 0.0964,
+        "rmse_log10": 0.1246,
+        "median_ae_log10": 0.0723,
+        "classification": {
+          "threshold_log10": -4.0,
+          "threshold_pc": 0.0001,
+          "tp": 2,
+          "fp": 0,
+          "tn": 6,
+          "fn": 0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "pr_auc": 1.0
+        }
+      }
+    },
+    "C_history_geometry_cov": {
+      "feature_columns": [
+        "last_eligible_pc_log",
+        "min_eligible_pc_log",
+        "max_eligible_pc_log",
+        "mean_eligible_pc_log",
+        "std_eligible_pc_log",
+        "eligible_message_count",
+        "pc_trend_slope",
+        "latest_miss_distance",
+        "min_miss_distance",
+        "latest_relative_speed",
+        "latest_log_radial_cov",
+        "latest_log_alongtrack_cov",
+        "latest_log_crosstrack_cov"
+      ],
+      "feature_count": 13,
+      "metrics": {
+        "mae_log10": 0.096,
+        "rmse_log10": 0.1115,
+        "median_ae_log10": 0.1098,
+        "classification": {
+          "threshold_log10": -4.0,
+          "threshold_pc": 0.0001,
+          "tp": 2,
+          "fp": 0,
+          "tn": 6,
+          "fn": 0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "pr_auc": 1.0
+        }
+      }
+    },
+    "D_full_evidence": {
+      "feature_columns": [
+        "last_eligible_pc_log",
+        "min_eligible_pc_log",
+        "max_eligible_pc_log",
+        "mean_eligible_pc_log",
+        "std_eligible_pc_log",
+        "eligible_message_count",
+        "pc_trend_slope",
+        "latest_miss_distance",
+        "min_miss_distance",
+        "latest_relative_speed",
+        "latest_log_radial_cov",
+        "latest_log_alongtrack_cov",
+        "latest_log_crosstrack_cov",
+        "time_to_tca_at_cutoff_hours",
+        "latest_message_age_hours",
+        "completeness_ratio"
+      ],
+      "feature_count": 16,
+      "metrics": {
+        "mae_log10": 0.096,
+        "rmse_log10": 0.1115,
+        "median_ae_log10": 0.1098,
+        "classification": {
+          "threshold_log10": -4.0,
+          "threshold_pc": 0.0001,
+          "tp": 2,
+          "fp": 0,
+          "tn": 6,
+          "fn": 0,
+          "recall": 1.0,
+          "precision": 1.0,
+          "pr_auc": 1.0
+        }
+      }
+    }
+  },
+  "validation_audit": {
+    "total_records_ingested": 223,
+    "valid_records_count": 222,
+    "quarantined_records_count": 0,
+    "duplicate_records_count": 1,
+    "missing_required_fields": {
+      "event_id": 0,
+      "message_time": 0,
+      "tca": 0,
+      "collision_probability": 0
+    },
+    "timestamp_parse_errors": 0,
+    "tca_inconsistencies": 0,
+    "pc_range_violations": 0,
+    "pc_parse_errors": 0,
+    "pc_non_finite_values": 0,
+    "quarantine_reasons": []
+  }
+}

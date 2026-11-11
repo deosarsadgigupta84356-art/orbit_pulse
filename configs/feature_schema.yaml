@@ -1,0 +1,78 @@
+# ORBIT PULSE Feature Schema Configuration
+# Aligned with Blueprint Section 7 & Appendix A
+
+dataset_version: "SYNTHETIC_CDM_FIXTURE_v1.0"
+schema_version: "1.0.0"
+
+required_raw_columns:
+  - event_id
+  - message_time
+  - tca
+  - collision_probability
+
+optional_raw_columns:
+  - message_id
+  - sat_1_id
+  - sat_2_id
+  - miss_distance
+  - relative_speed
+  - c_r_r
+  - c_t_t
+  - c_n_n
+
+target_column: "final_target_pc"
+
+log_transform:
+  epsilon: 1.0e-12
+  clip_min: -15.0
+  clip_max: 0.0
+
+feature_sets:
+  # Ablation A: Last eligible Pc only
+  set_a_baseline:
+    - last_eligible_pc_log
+
+  # Ablation B: Pc history summaries
+  set_b_history:
+    - last_eligible_pc_log
+    - min_eligible_pc_log
+    - max_eligible_pc_log
+    - mean_eligible_pc_log
+    - std_eligible_pc_log
+    - eligible_message_count
+    - pc_trend_slope
+
+  # Ablation C: History + Geometry + Uncertainty
+  set_c_context:
+    - last_eligible_pc_log
+    - min_eligible_pc_log
+    - max_eligible_pc_log
+    - mean_eligible_pc_log
+    - std_eligible_pc_log
+    - eligible_message_count
+    - pc_trend_slope
+    - latest_miss_distance
+    - min_miss_distance
+    - latest_relative_speed
+    - latest_log_radial_cov
+    - latest_log_alongtrack_cov
+    - latest_log_crosstrack_cov
+
+  # Ablation D: History + Geometry + Evidence Features
+  set_d_full:
+    - last_eligible_pc_log
+    - min_eligible_pc_log
+    - max_eligible_pc_log
+    - mean_eligible_pc_log
+    - std_eligible_pc_log
+    - eligible_message_count
+    - pc_trend_slope
+    - latest_miss_distance
+    - min_miss_distance
+    - latest_relative_speed
+    - latest_log_radial_cov
+    - latest_log_alongtrack_cov
+    - latest_log_crosstrack_cov
+    - time_to_tca_at_cutoff_hours
+    - latest_message_age_hours
+    - completeness_ratio

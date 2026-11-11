@@ -1,0 +1,57 @@
+
+# ==============================
+# ORBIT PULSE - Git Ignore Rules
+# ==============================
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+.streamlit/
+*secret*
+*credential*
+*token*
+
+# Private keys and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+
+# Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files and logs
+*.log
+*.tmp
+*.bak
+
+# Model backups
+models/backup_before_retraining/
+
+# Restricted operational data
+data/restricted/

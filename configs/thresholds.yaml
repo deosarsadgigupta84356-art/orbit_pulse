@@ -1,0 +1,29 @@
+# ORBIT PULSE Decision & Evidence Thresholds Configuration
+# Aligned with Blueprint Sections 10, 11 and Appendix A
+
+risk_thresholds:
+  # Operational threshold for escalation: Pc >= 1e-4 (log10 >= -4.0)
+  high_pc_threshold: 0.0001
+  log_high_pc_threshold: -4.0
+  # Low/baseline threshold: Pc < 1e-6 (log10 < -6.0)
+  low_pc_threshold: 0.000001
+  log_low_pc_threshold: -6.0
+
+evidence_thresholds:
+  freshness:
+    fresh_hours: 12.0      # <= 12h: FRESH
+    ageing_hours: 24.0     # 12h - 24h: AGEING
+    stale_hours: 24.0      # > 24h: STALE
+  completeness:
+    high_ratio: 0.90       # >= 90% expected fields present
+    acceptable_ratio: 0.70 # 70% - 90%
+  stability:
+    max_log_shift_sensitive: 1.0  # > 1 order of magnitude shift under perturbation = SENSITIVE
+    min_perturbation_samples: 2
+
+labels:
+  low: "LOW — ROUTINE MONITORING"
+  uncertain: "UNCERTAIN — FURTHER ASSESSMENT"
+  high: "HIGH — ESCALATE FOR MANOEUVRE REVIEW"
+
+disclaimer: "Student research prototype — not for operational spacecraft manoeuvre decisions. All outputs are advisory decision-support indicators."

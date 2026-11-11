@@ -1,0 +1,44 @@
+{
+  "model_type": "HistGradientBoostingRegressor",
+  "library": "scikit-learn",
+  "feature_names": [
+    "last_eligible_pc_log",
+    "min_eligible_pc_log",
+    "max_eligible_pc_log",
+    "mean_eligible_pc_log",
+    "std_eligible_pc_log",
+    "eligible_message_count",
+    "pc_trend_slope",
+    "latest_miss_distance",
+    "min_miss_distance",
+    "latest_relative_speed",
+    "latest_log_radial_cov",
+    "latest_log_alongtrack_cov",
+    "latest_log_crosstrack_cov",
+    "time_to_tca_at_cutoff_hours",
+    "latest_message_age_hours",
+    "completeness_ratio"
+  ],
+  "target": "log10(target_final_pc + 1e-12)",
+  "epsilon": 1e-12,
+  "dataset_version": "SYNTHETIC_CDM_FIXTURE_v1.0",
+  "is_synthetic_fixture": true,
+  "split_summary": {
+    "train_events": 21,
+    "train_tca_range": [
+      "2026-01-01 10:29:24+00:00",
+      "2026-02-14 02:25:27+00:00"
+    ],
+    "val_events": 7,
+    "val_tca_range": [
+      "2026-02-17 01:26:50+00:00",
+      "2026-03-02 01:28:31+00:00"
+    ],
+    "test_events": 8,
+    "test_tca_range": [
+      "2026-03-12 21:17:43+00:00",
+      "2026-03-28 16:33:40+00:00"
+    ]
+  },
+  "training_timestamp_utc": "2026-11-11T11:56:11Z"
+}

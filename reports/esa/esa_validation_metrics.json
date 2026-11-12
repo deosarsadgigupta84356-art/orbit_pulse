@@ -1,0 +1,71 @@
+{
+    "dataset": "ESA Collision Avoidance Challenge",
+    "prediction_cutoff_days": 2.0,
+    "risk_floor": -30.0,
+    "validation_method": "Stratified event-level holdout",
+    "validation_fraction": 0.2,
+    "random_state": 42,
+    "total_eligible_events": 11942,
+    "training_events": 9553,
+    "validation_events": 2389,
+    "feature_count": 101,
+    "numeric_feature_count": 100,
+    "categorical_features": [
+        "c_object_type"
+    ],
+    "classifier": {
+        "random_forest": {
+            "accuracy": 0.8899120971117622,
+            "precision": 0.9225016995241332,
+            "recall": 0.901062416998672,
+            "f1": 0.9116560295599597,
+            "roc_auc": 0.9619889637373495,
+            "average_precision": 0.97884096712046,
+            "confusion_matrix_labels": [
+                "above_floor",
+                "risk_floor"
+            ],
+            "confusion_matrix": [
+                [
+                    769,
+                    114
+                ],
+                [
+                    149,
+                    1357
+                ]
+            ]
+        },
+        "majority_class_baseline": {
+            "accuracy": 0.6303892842193386,
+            "f1": 0.7732991014120667
+        }
+    },
+    "conditional_regression": {
+        "evaluation_events": 883,
+        "random_forest": {
+            "mae": 1.5888484526171813,
+            "rmse": 3.3484883728492854
+        },
+        "median_baseline": {
+            "mae": 4.338721926165187,
+            "rmse": 5.916976963567266
+        },
+        "latest_observed_risk_baseline": {
+            "mae": 1.8133341957964633,
+            "rmse": 4.956928081429151
+        }
+    },
+    "combined_prediction": {
+        "two_stage_model": {
+            "mae": 2.187949997225478,
+            "rmse": 5.908658566146625
+        },
+        "latest_observed_risk_baseline": {
+            "mae": 3.6488694395989594,
+            "rmse": 8.004201574207263
+        },
+        "validation_events": 2389
+    },
+    "private_evaluation_labels_used": false
+}

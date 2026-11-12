@@ -1,0 +1,16 @@
+{
+    "model_name": "ORBIT PULSE ESA Two-Stage Risk Model",
+    "dataset": "ESA Collision Avoidance Challenge",
+    "dataset_source": "https://zenodo.org/records/4463683",
+    "dataset_license": "Creative Commons Attribution 4.0 International",
+    "prediction_cutoff_days": 2.0,
+    "target": "Final event-level base-10 logarithmic risk",
+    "risk_floor": -30.0,
+    "validation_method": "Stratified event-level holdout",
+    "random_state": 42,
+    "feature_count": 101,
+    "training_events": 9553,
+    "validation_events": 2389,
+    "private_evaluation_labels_used": false,
+    "operational_status": "Research prototype"
+}

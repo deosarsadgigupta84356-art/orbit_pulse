@@ -55,3 +55,5 @@ models/backup_before_retraining/
 
 # Restricted operational data
 data/restricted/
+
+data/raw/esa/

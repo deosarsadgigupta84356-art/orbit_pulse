@@ -170,3 +170,79 @@ Access the console in your browser at `http://localhost:8501`.
 5. **Model Evaluation & Disclaimer (30s)**:
    - Show **Model Performance & Ablations**: Benchmark comparison against the Last-Eligible Pc baseline, the 4 mandatory ablation tiers (A, B, C, D), and the confusion matrix.
    - Conclude with the operational disclaimer: advisory decision support for human operators.
+
+
+@'
+
+---
+
+## 8. ESA Collision Avoidance Challenge Research Pipeline
+
+ORBIT PULSE includes a separate ESA research pipeline alongside its original synthetic demonstration.
+
+### Dataset Attribution
+
+- Dataset: ESA Collision Avoidance Challenge (2015–2019)
+- Source: https://zenodo.org/records/4463683
+- DOI: https://doi.org/10.5281/zenodo.4463683
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Authors: Thomas Uriot, Dario Izzo, Jose Martinez-Heras, Francesca Letizia, Jan Siminski, and Klaus Merz.
+
+The original dataset authors must receive attribution when the dataset or derived material is redistributed.
+
+Raw dataset archives and private evaluation labels are excluded from this repository.
+
+### Model Architecture
+
+The ESA model uses two stages:
+
+1. Random Forest classification to identify the dataset's risk reporting floor (-30).
+2. Random Forest regression to estimate final logarithmic risk for events predicted above that floor.
+
+Features are constructed using CDM observations available at least 2 days before TCA.
+
+### Initial Internal Validation
+
+| Metric | Result |
+|---|---:|
+| Classification accuracy | 0.890 |
+| Classification ROC-AUC | 0.962 |
+| Conditional regression MAE | 1.589 |
+| Combined prediction MAE | 2.188 |
+| Combined prediction RMSE | 5.909 |
+
+These are initial internal validation results, not operational performance guarantees or official competition leaderboard results.
+
+### ESA Model Files
+
+- `src/esa_data.py` — ESA dataset loading and validation.
+- `src/esa_features.py` — Leakage-controlled feature extraction.
+- `src/train_esa_model.py` — Two-stage model training.
+- `src/esa_predict.py` — ESA inference.
+- `models/esa/esa_two_stage_model.joblib` — Trained model.
+- `models/esa/esa_model_metadata.json` — Model metadata.
+- `reports/esa/esa_validation_metrics.json` — Validation metrics.
+
+### Public Test Inference
+
+The initial public-test inference successfully generated finite predictions for 2,167 events.
+
+Private evaluation labels were not used for training or inference.
+
+### Integration and Safety Status
+
+The ESA pipeline currently runs separately from the Streamlit dashboard. Dashboard integration is still pending.
+
+The ESA logarithmic risk output is not interchangeable with the synthetic pipeline's collision probability (Pc). A risk-floor prediction does not establish zero collision probability or prove an event is safe.
+
+ORBIT PULSE remains a research and advisory decision-support prototype. Qualified operators make all final operational decisions. No autonomous manoeuvre commands are issued.
+
+### Automated Tests
+
+The complete project currently has 37 passing automated tests.
+
+Run the tests with:
+
+```powershell
+python -m pytest -q
+```

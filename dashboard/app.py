@@ -41,6 +41,7 @@ from dashboard.charts import (
     create_precision_recall_chart,
     create_error_distribution_chart
 )
+from dashboard.orbital_view import create_orbital_scene
 
 st.set_page_config(
     page_title="ORBIT PULSE | Conjunction Risk Intelligence",
@@ -130,7 +131,8 @@ screens = [
     "Event Detail",
     "Evidence & Explanation",
     "Model Performance & Ablations",
-    "Audit & Data Quality"
+    "Audit & Data Quality",
+    "3D Orbital Intelligence"
 ]
 active_screen = st.sidebar.radio("Console View:", screens, index=0)
 
@@ -876,6 +878,182 @@ elif active_screen == "Audit & Data Quality":
         if os.path.exists(meta_path):
             with open(meta_path, "r", encoding="utf-8") as f:
                 st.json(json.load(f))
+
+# -------------------------------------------------------------
+# SCREEN 8: 3D ORBITAL INTELLIGENCE
+# -------------------------------------------------------------
+elif active_screen == "3D Orbital Intelligence":
+    st.subheader("3D Orbital Intelligence")
+    st.caption(
+        "Interactive Earth-centered visualization with illustrative "
+        "orbital trajectories and selected conjunction intelligence."
+    )
+
+    if df_event_summaries.empty:
+        st.warning("No conjunction events are currently available.")
+    else:
+        event_options = df_event_summaries["event_id"].astype(str).tolist()
+
+        default_event = st.session_state.selected_event_id
+        default_index = (
+            event_options.index(str(default_event))
+            if str(default_event) in event_options
+            else 0
+        )
+
+        selected_orbital_event = st.selectbox(
+            "Select conjunction event",
+            event_options,
+            index=default_index,
+            key="orbital_intelligence_event"
+        )
+
+        selected_rows = df_event_summaries[
+            df_event_summaries["event_id"].astype(str)
+            == selected_orbital_event
+        ]
+
+        if not selected_rows.empty:
+            event_row = selected_rows.iloc[0].to_dict()
+
+            # Retrieve latest validated CDM measurements for this event.
+            event_records = valid_df[
+                valid_df["event_id"].astype(str)
+                == selected_orbital_event
+            ].copy()
+
+            if not event_records.empty:
+                event_records = event_records.sort_values(
+                    "message_time"
+                )
+                latest_record = event_records.iloc[-1]
+
+                event_row["miss_distance"] = latest_record.get(
+                    "miss_distance"
+                )
+                event_row["relative_speed"] = latest_record.get(
+                    "relative_speed"
+                )
+
+            st.session_state.selected_event_id = selected_orbital_event
+
+            # Event intelligence metrics.
+            metric_1, metric_2, metric_3, metric_4 = st.columns(4)
+
+            with metric_1:
+                st.metric(
+                    "Risk Classification",
+                    str(event_row.get("risk_band", "UNKNOWN"))
+                )
+
+            with metric_2:
+                pc_value = event_row.get("predicted_pc")
+                st.metric(
+                    "Predicted Collision Probability",
+                    f"{pc_value:.3e}"
+                    if pd.notna(pc_value) else "Unavailable"
+                )
+
+            with metric_3:
+                miss_value = event_row.get("miss_distance")
+                st.metric(
+                    "Miss Distance",
+                    f"{miss_value:,.2f} m"
+                    if pd.notna(miss_value) else "Unavailable"
+                )
+
+            with metric_4:
+                speed_value = event_row.get("relative_speed")
+                st.metric(
+                    "Relative Speed",
+                    f"{speed_value:,.2f} m/s"
+                    if pd.notna(speed_value) else "Unavailable"
+                )
+
+            st.markdown("---")
+
+                       # Interactive 3D visualization controls.
+            st.markdown("### Visualization Controls")
+
+            control_1, control_2, control_3, control_4 = st.columns(4)
+
+            with control_1:
+                show_satellites = st.checkbox(
+                    "Satellite Objects",
+                    value=True,
+                    key="orbital_show_satellites"
+                )
+
+            with control_2:
+                show_debris = st.checkbox(
+                    "Debris Objects",
+                    value=True,
+                    key="orbital_show_debris"
+                )
+
+            with control_3:
+                show_orbits = st.checkbox(
+                    "Orbital Trajectories",
+                    value=True,
+                    key="orbital_show_orbits"
+                )
+
+            with control_4:
+                show_labels = st.checkbox(
+                    "Object Labels",
+                    value=True,
+                    key="orbital_show_labels"
+                )
+
+            orbital_figure = create_orbital_scene(
+                event_row,
+                show_satellites=show_satellites,
+                show_debris=show_debris,
+                show_orbits=show_orbits,
+                show_labels=show_labels,
+            )
+            st.plotly_chart(
+                orbital_figure,
+                use_container_width=True,
+                key="orbital_intelligence_3d_scene"
+            )
+
+            st.markdown("### Selected Event Intelligence")
+
+            detail_col_1, detail_col_2 = st.columns(2)
+
+            with detail_col_1:
+                st.markdown(
+                    f"**Event ID:** `{selected_orbital_event}`"
+                )
+                st.markdown(
+                    f"**Object 1:** `{event_row.get('sat_1_id', 'N/A')}`"
+                )
+                st.markdown(
+                    f"**Object 2:** `{event_row.get('sat_2_id', 'N/A')}`"
+                )
+
+            with detail_col_2:
+                st.markdown(
+                    f"**Time of Closest Approach (UTC):** "
+                    f"`{event_row.get('tca_utc', 'N/A')}`"
+                )
+                st.markdown(
+                    f"**Risk Band:** `{event_row.get('risk_band', 'N/A')}`"
+                )
+                st.markdown(
+                    f"**Recommendation:** "
+                    f"{event_row.get('recommendation') or 'Unavailable'}"
+                )
+
+            st.info(
+                "Scientific transparency: the Earth sphere, orbital paths, "
+                "object positions and connector are illustrative only. "
+                "The current synthetic CDM fixture does not contain actual "
+                "orbital elements or position vectors. Event measurements "
+                "and model outputs are displayed from the available dataset."
+            )
+
 
 # Bottom Operational Disclaimer (Every screen)
 st.markdown("""

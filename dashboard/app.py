@@ -564,40 +564,6 @@ elif active_screen == "Event Explorer":
             st.session_state.selected_event_id = selected
             st.rerun()
 
-    st.dataframe(
-        filtered_df[["event_id", "sat_1_id", "sat_2_id", "tca_utc", "eligible", "eligible_message_count", "excluded_message_count", "risk_band", "predicted_pc", "freshness_hours", "stability", "advisory_label"]],
-        column_config={
-            "predicted_pc": st.column_config.NumberColumn("Predicted Final Pc", format="%.2e"),
-            "freshness_hours": st.column_config.NumberColumn("Freshness (h)", format="%.1f")
-        },
-        hide_index=True,
-        use_container_width=True
-    )
-
-    compare_ids = st.multiselect(
-        "Compare events (select up to 4)",
-        filtered_df["event_id"].tolist(),
-        key="event_compare_ids"
-    )
-    if len(compare_ids) > 4:
-        st.warning("Please select no more than four events for side-by-side comparison.")
-        compare_ids = compare_ids[:4]
-    if compare_ids:
-        compare_df = filtered_df[filtered_df["event_id"].isin(compare_ids)].copy()
-        st.markdown("#### Selected Event Comparison")
-        st.dataframe(
-            compare_df[["event_id", "tca_utc", "risk_band", "predicted_pc", "eligible_message_count", "freshness_hours", "completeness", "stability", "advisory_label"]],
-            hide_index=True,
-            use_container_width=True
-        )
-
-    # Quick selector
-    event_ids = filtered_df["event_id"].tolist()
-    if event_ids:
-        selected = st.selectbox("Inspect Conjunction Event in Detail:", event_ids, index=0)
-        if st.button("Open Selected Event in Detail View"):
-            st.session_state.selected_event_id = selected
-            st.rerun()
 
 # -------------------------------------------------------------
 # SCREEN 4: EVENT DETAIL

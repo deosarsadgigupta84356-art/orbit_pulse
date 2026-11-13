@@ -182,7 +182,7 @@ class ESATwoStagePredictor:
             "prediction_cutoff_days": self.prediction_cutoff_days,
             "prediction_target": "final_event_base10_log_risk",
             "model_name": "ORBIT PULSE ESA Two-Stage Risk Model",
-            "operational_status": "Research prototype",
+            "operational_status": "Historical ESA Data Model - Offline Inference",
         })
 
         if results["event_id"].duplicated().any():

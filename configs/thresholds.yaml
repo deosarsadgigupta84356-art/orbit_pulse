@@ -26,4 +26,4 @@ labels:
   uncertain: "UNCERTAIN — FURTHER ASSESSMENT"
   high: "HIGH — ESCALATE FOR MANOEUVRE REVIEW"
 
-disclaimer: "Student research prototype — not for operational spacecraft manoeuvre decisions. All outputs are advisory decision-support indicators."
+disclaimer: "Engineering decision-support system - not validated for operational spacecraft manoeuvre decisions. All outputs are advisory indicators requiring qualified human review."

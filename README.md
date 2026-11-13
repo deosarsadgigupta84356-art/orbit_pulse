@@ -1,12 +1,12 @@
 # ORBIT PULSE
-### Satellite Conjunction Risk Intelligence & Decision Support Prototype (SW-5)
+### Satellite Conjunction Risk Intelligence & Decision Support
 
 > [!IMPORTANT]
 > **OPERATIONAL & SCIENTIFIC SAFETY DISCLAIMER**
-> 1. **Advisory Prototype**: ORBIT PULSE is an academic research and decision-support prototype. Qualified satellite operators make all final manoeuvre decisions. Never issue autonomous burn commands.
+> 1. **Advisory Decision Support**: ORBIT PULSE provides satellite conjunction-risk intelligence and engineering decision support. Qualified satellite operators retain final manoeuvre authority. Never issue autonomous burn commands.
 > 2. **Target Distinction**: A final reported Conjunction Data Message (CDM) $P_c$ is an eventual dataset-reported risk estimate, **not** proof that a physical collision occurred.
 > 3. **Uncertainty Distinction**: Model sensitivity to eligible historical inputs reflects algorithmic stability under data perturbations, **not** physical orbit covariance or real-world uncertainty bounds.
-> 4. **Data Provenance**: In the absence of an approved real-time operational CDM feed, this prototype uses a clearly labeled synthetic fixture for UI and pipeline verification. **Never report synthetic predictive performance as real validation.**
+> 4. **Data Provenance**: The Streamlit dashboard's existing replay and evaluation pipeline uses a clearly labeled synthetic fixture for UI and pipeline verification. Separately, the ESA research pipeline is trained on real, anonymized historical ESA CDM data from 2015–2019 and performs offline inference. The ESA model is not a live operational feed and has not yet been integrated into the dashboard. Synthetic fixture metrics must never be presented as real-world validation, and historical-data holdout results must not be presented as operational validation.
 
 ---
 
@@ -235,7 +235,7 @@ The ESA pipeline currently runs separately from the Streamlit dashboard. Dashboa
 
 The ESA logarithmic risk output is not interchangeable with the synthetic pipeline's collision probability (Pc). A risk-floor prediction does not establish zero collision probability or prove an event is safe.
 
-ORBIT PULSE remains a research and advisory decision-support prototype. Qualified operators make all final operational decisions. No autonomous manoeuvre commands are issued.
+ORBIT PULSE is an engineering decision-support system for satellite conjunction-risk intelligence. Its outputs remain advisory, and qualified operators retain final operational authority. No autonomous manoeuvre commands are issued.
 
 ### Automated Tests
 

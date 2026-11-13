@@ -12,5 +12,5 @@
     "training_events": 9553,
     "validation_events": 2389,
     "private_evaluation_labels_used": false,
-    "operational_status": "Research prototype"
+    "operational_status": "Historical ESA Data Model - Offline Inference"
 }

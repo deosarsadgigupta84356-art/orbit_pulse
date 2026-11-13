@@ -148,5 +148,5 @@ def evaluate_decision_policy(
         "actionable_next_steps": actionable_next_steps,
         "competition_binary_flag": competition_binary_flag,
         "operational_threshold_applied": high_threshold,
-        "disclaimer": config.get("disclaimer", "Advisory prototype only.")
+        "disclaimer": config.get("disclaimer", "Engineering decision support only; not validated for operational spacecraft manoeuvre decisions."),
     }

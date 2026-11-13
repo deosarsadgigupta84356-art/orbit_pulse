@@ -506,7 +506,7 @@ def train_and_evaluate_esa_models():
         "training_events": len(X_train),
         "validation_events": len(X_validation),
         "private_evaluation_labels_used": False,
-        "operational_status": "Research prototype",
+        "operational_status": "Historical ESA Data Model - Offline Inference",
     }
 
     joblib.dump(model_bundle, MODEL_PATH)

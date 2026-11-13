@@ -127,7 +127,7 @@ def test_predictor_output_contains_research_status(
     results = predictor.predict(history)
 
     assert (
-        results["operational_status"] == "Research prototype"
+        results["operational_status"] == "Historical ESA Data Model - Offline Inference"
     ).all()
     assert (
         results["prediction_target"]

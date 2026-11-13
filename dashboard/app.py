@@ -1,7 +1,7 @@
 """
 ORBIT PULSE - Mission-Control Analytics Console
 ================================================
-Satellite Conjunction Risk Intelligence & Decision Support Prototype
+Satellite Conjunction Risk Intelligence & Decision Support
 Follows the ORBIT PULSE Master Blueprint as exact source of truth.
 """
 
@@ -139,7 +139,7 @@ active_screen = st.sidebar.radio("Console View:", screens, index=0)
 # Sidebar Safety Disclaimer
 st.sidebar.markdown("---")
 st.sidebar.markdown(
-    "<small><b>Student Research Prototype</b><br>"
+    "<small><b>Historical Data Decision Support</b><br>"
     "Advisory output only. Not for autonomous spacecraft manoeuvre decisions.<br>"
     "Qualified operators retain final operational authority.</small>",
     unsafe_allow_html=True
@@ -1059,7 +1059,7 @@ elif active_screen == "3D Orbital Intelligence":
 st.markdown("""
 <div class="disclaimer-box">
     <b>OPERATIONAL & SCIENTIFIC SAFETY DISCLAIMER</b><br>
-    ORBIT PULSE is an academic and engineering decision-support prototype.
+    ORBIT PULSE is a satellite conjunction-risk intelligence and engineering decision-support system using historical and demonstration datasets.
     1. A final reported CDM Pc is a dataset-defined risk estimate, not proof that a physical collision occurred.<br>
     2. Model sensitivity to eligible historical inputs reflects algorithmic stability, not physical orbit covariance or real-world uncertainty bounds.<br>
     3. All recommendations are advisory. Never issue autonomous manoeuvre burn commands without qualified human operator review.

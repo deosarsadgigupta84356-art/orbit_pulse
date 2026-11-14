@@ -26,6 +26,7 @@ from src.event_builder import build_event_histories
 from src.snapshot_48h import build_all_snapshots, build_48h_snapshot
 from src.feature_engineering import build_dataset_feature_matrix, extract_snapshot_features
 from src.predict import OrbitPulsePredictor
+from dashboard.esa_view import render_esa_screen
 from src.audit import record_audit_entry, load_audit_trail, hash_snapshot_inputs
 from dashboard.theme import (
     CUSTOM_CSS, COLOR_BG, COLOR_PANEL, COLOR_ACCENT_CYAN,
@@ -62,6 +63,47 @@ if "selected_event_id" not in st.session_state:
     st.session_state.selected_event_id = None
 if "audit_keys" not in st.session_state:
     st.session_state.audit_keys = set()
+# Top Navigation Sidebar
+st.sidebar.image("https://img.icons8.com/fluency/96/satellite.png", width=64)
+st.sidebar.title("ORBIT PULSE")
+st.sidebar.caption("Satellite Conjunction Risk Intelligence & Decision Support")
+st.sidebar.markdown("### Data Source")
+selected_data_source = st.sidebar.radio(
+    "Choose intelligence dataset:",
+    ["Synthetic Demonstration", "Historical ESA Dataset"],
+    index=0,
+    key="orbit_pulse_data_source"
+)
+# Shared Navigation — Available for Both Datasets
+screens = [
+    "Mission Overview",
+    "Live Risk Monitor",
+    "Event Explorer",
+    "Event Detail",
+    "Evidence & Explanation",
+    "Model Performance & Ablations",
+    "Audit & Data Quality",
+    "3D Orbital Intelligence"
+]
+
+active_screen = st.sidebar.radio("Console View:", screens, index=0)
+
+# Sidebar Safety Disclaimer
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    "<small><b>Historical Data Decision Support</b><br>"
+    "Advisory output only. Not for autonomous spacecraft manoeuvre decisions.<br>"
+    "Qualified operators retain final operational authority.</small>",
+    unsafe_allow_html=True
+)
+
+# Historical ESA Dataset Routing
+if selected_data_source == "Historical ESA Dataset":
+    st.sidebar.info("Historical ESA Data · Offline Inference")
+    render_esa_screen(active_screen)
+    st.stop()
+
+# Initialize the original synthetic predictor only in synthetic mode.
 if "predictor" not in st.session_state:
     try:
         st.session_state.predictor = OrbitPulsePredictor()
@@ -69,11 +111,6 @@ if "predictor" not in st.session_state:
     except Exception as e:
         st.session_state.predictor = None
         st.session_state.model_load_error = f"{type(e).__name__}: {e}"
-
-# Top Navigation Sidebar
-st.sidebar.image("https://img.icons8.com/fluency/96/satellite.png", width=64)
-st.sidebar.title("ORBIT PULSE")
-st.sidebar.caption("SW-5 Satellite Conjunction Risk Intelligence & Decision Support")
 if st.session_state.predictor is None:
     st.sidebar.error("MODEL OFFLINE — predictions are disabled")
     if st.sidebar.button("Retry model loading", use_container_width=True):
@@ -122,28 +159,6 @@ elif st.session_state.data_mode == "MANUAL / BATCH":
             st.sidebar.error(f"Could not read CSV: {exc}")
     else:
         st.session_state.manual_df = None
-
-# Navigation Screen Selector
-screens = [
-    "Mission Overview",
-    "Live Risk Monitor",
-    "Event Explorer",
-    "Event Detail",
-    "Evidence & Explanation",
-    "Model Performance & Ablations",
-    "Audit & Data Quality",
-    "3D Orbital Intelligence"
-]
-active_screen = st.sidebar.radio("Console View:", screens, index=0)
-
-# Sidebar Safety Disclaimer
-st.sidebar.markdown("---")
-st.sidebar.markdown(
-    "<small><b>Historical Data Decision Support</b><br>"
-    "Advisory output only. Not for autonomous spacecraft manoeuvre decisions.<br>"
-    "Qualified operators retain final operational authority.</small>",
-    unsafe_allow_html=True
-)
 
 # -------------------------------------------------------------
 # Data Loading & Processing Pipeline

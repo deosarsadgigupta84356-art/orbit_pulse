@@ -67,6 +67,9 @@ if "selected_event_id" not in st.session_state:
     st.session_state.selected_event_id = None
 if "audit_keys" not in st.session_state:
     st.session_state.audit_keys = set()
+
+if "prediction_cache" not in st.session_state:
+    st.session_state.prediction_cache = {}
 # Top Navigation Sidebar
 st.sidebar.image("https://img.icons8.com/fluency/96/satellite.png", width=64)
 st.sidebar.title("ORBIT PULSE")
@@ -247,19 +250,40 @@ def load_and_validate_pipeline(mode: str, replay_idx: int, manual_data=None):
     snapshots = build_all_snapshots(events)
     return active_raw, valid_df, quarantine_df, audit, events, snapshots, feed_time
 
-# Compute summaries from current snapshots without caching global/session state.
 def get_all_event_predictions(current_snapshots, predictor):
     summaries = []
+
     for evt_id, snap in current_snapshots.items():
-        pred_out = predictor.predict_snapshot(snap) if predictor else {}
+        pred_out = {}
+
         if predictor:
-            audit_key = (
-                f"{evt_id}|{snap.cutoff_utc}|{hash_snapshot_inputs(snap)}|"
+            input_hash = hash_snapshot_inputs(snap)
+            cache_key = (
+                f"{evt_id}|{snap.cutoff_utc}|{input_hash}|"
                 f"{predictor.model_version}"
             )
+
+            # Cache expensive predictions only for eligible snapshots.
+            if snap.eligible and snap.eligible_message_count > 0:
+                cached_prediction = st.session_state.prediction_cache.get(cache_key)
+
+                if cached_prediction is not None:
+                    pred_out = dict(cached_prediction)
+                    pred_out["prediction_timestamp_utc"] = (
+                        pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
+                    )
+                else:
+                    pred_out = predictor.predict_snapshot(snap)
+                    st.session_state.prediction_cache[cache_key] = dict(pred_out)
+            else:
+                # Ineligible snapshots are inexpensive; recompute them.
+                pred_out = predictor.predict_snapshot(snap)
+
+            audit_key = cache_key
             if audit_key not in st.session_state.audit_keys:
                 record_audit_entry(pred_out, snap)
                 st.session_state.audit_keys.add(audit_key)
+
         summaries.append({
             "event_id": evt_id,
             "sat_1_id": snap.sat_1_id,
@@ -280,12 +304,14 @@ def get_all_event_predictions(current_snapshots, predictor):
             "stability": pred_out.get("forecast_stability"),
             "target_final_pc": snap.target_final_pc
         })
+
     summary_columns = [
         "event_id", "sat_1_id", "sat_2_id", "tca", "tca_utc", "cutoff_utc", "eligible",
         "eligible_message_count", "excluded_message_count", "predicted_pc",
         "predicted_log", "risk_band", "recommendation", "advisory_label",
         "freshness_hours", "completeness", "stability", "target_final_pc"
     ]
+
     return pd.DataFrame(summaries, columns=summary_columns)
 
 raw_active, valid_df, quarantine_df, val_audit, events, snapshots, feed_time = load_and_validate_pipeline(

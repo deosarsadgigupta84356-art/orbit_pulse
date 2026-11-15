@@ -170,6 +170,32 @@ elif st.session_state.data_mode == "MANUAL / BATCH":
 # -------------------------------------------------------------
 # Data Loading & Processing Pipeline
 # -------------------------------------------------------------
+@st.cache_data(show_spinner="Processing synthetic CDM data...")
+def process_active_data(active_raw, fallback_df):
+    try:
+        valid_df, quarantine_df, audit = validate_cdm_records(active_raw)
+    except (ValueError, KeyError, TypeError) as exc:
+        valid_df = fallback_df.iloc[0:0].copy()
+        quarantine_df = active_raw.copy()
+        audit = {
+            "total_records_ingested": len(active_raw),
+            "valid_records_count": 0,
+            "quarantined_records_count": len(active_raw),
+            "duplicate_records_count": 0,
+            "missing_required_fields": {},
+            "timestamp_parse_errors": 0,
+            "tca_inconsistencies": 0,
+            "pc_range_violations": 0,
+            "quarantine_reasons": [
+                f"Input schema or type validation failed: {exc}"
+            ],
+            "schema_error": str(exc)
+        }
+
+    events = build_event_histories(valid_df)
+    snapshots = build_all_snapshots(events)
+
+    return valid_df, quarantine_df, audit, events, snapshots
 def load_and_validate_pipeline(mode: str, replay_idx: int, manual_data=None):
     raw_df = load_synthetic_raw_data()
 
@@ -228,26 +254,37 @@ def load_and_validate_pipeline(mode: str, replay_idx: int, manual_data=None):
 
     if active_raw.empty:
         active_raw = raw_df.iloc[0:0].copy()
-    try:
-        valid_df, quarantine_df, audit = validate_cdm_records(active_raw)
-    except (ValueError, KeyError, TypeError) as exc:
-        # Keep the dashboard usable when a manual CSV has an unsupported schema.
-        valid_df = raw_df.iloc[0:0].copy()
-        quarantine_df = active_raw.copy()
-        audit = {
-            "total_records_ingested": len(active_raw),
-            "valid_records_count": 0,
-            "quarantined_records_count": len(active_raw),
-            "duplicate_records_count": 0,
-            "missing_required_fields": {},
-            "timestamp_parse_errors": 0,
-            "tca_inconsistencies": 0,
-            "pc_range_violations": 0,
-            "quarantine_reasons": [f"Input schema or type validation failed: {exc}"],
-            "schema_error": str(exc)
-        }
-    events = build_event_histories(valid_df)
-    snapshots = build_all_snapshots(events)
+
+    if mode == "MANUAL / BATCH":
+        # Keep manual-upload processing uncached to preserve provenance.
+        try:
+            valid_df, quarantine_df, audit = validate_cdm_records(active_raw)
+        except (ValueError, KeyError, TypeError) as exc:
+            valid_df = raw_df.iloc[0:0].copy()
+            quarantine_df = active_raw.copy()
+            audit = {
+                "total_records_ingested": len(active_raw),
+                "valid_records_count": 0,
+                "quarantined_records_count": len(active_raw),
+                "duplicate_records_count": 0,
+                "missing_required_fields": {},
+                "timestamp_parse_errors": 0,
+                "tca_inconsistencies": 0,
+                "pc_range_violations": 0,
+                "quarantine_reasons": [
+                    f"Input schema or type validation failed: {exc}"
+                ],
+                "schema_error": str(exc)
+            }
+
+        events = build_event_histories(valid_df)
+        snapshots = build_all_snapshots(events)
+
+    else:
+        valid_df, quarantine_df, audit, events, snapshots = (
+            process_active_data(active_raw, raw_df)
+        )
+
     return active_raw, valid_df, quarantine_df, audit, events, snapshots, feed_time
 
 def get_all_event_predictions(current_snapshots, predictor):

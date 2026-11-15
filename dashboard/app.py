@@ -115,6 +115,7 @@ if selected_data_source == "Historical ESA Dataset":
     st.stop()
 
 # Initialize the original synthetic predictor only in synthetic mode.
+startup_timer = time.perf_counter()
 if "predictor" not in st.session_state:
     try:
         st.session_state.predictor = OrbitPulsePredictor()
@@ -138,6 +139,11 @@ else:
     st.sidebar.success(f"MODEL READY · {st.session_state.predictor.model_version}")
 
 # Operational Mode Selector
+print(
+    f"[STARTUP TIMING] Synthetic model initialization: "
+    f"{time.perf_counter() - startup_timer:.3f}s",
+    flush=True
+)
 st.sidebar.markdown("### 📡 Operational Mode")
 mode_selection = st.sidebar.radio(
     "Data Source Mode:",
@@ -355,13 +361,29 @@ def get_all_event_predictions(current_snapshots, predictor):
 
     return pd.DataFrame(summaries, columns=summary_columns)
 
+pipeline_timer = time.perf_counter()
+
 raw_active, valid_df, quarantine_df, val_audit, events, snapshots, feed_time = load_and_validate_pipeline(
     st.session_state.data_mode,
     st.session_state.replay_index,
     getattr(st.session_state, "manual_df", None)
 )
+
+print(
+    f"[STARTUP TIMING] Synthetic data pipeline: "
+    f"{time.perf_counter() - pipeline_timer:.3f}s",
+    flush=True
+)
+
+prediction_timer = time.perf_counter()
+
 df_event_summaries = get_all_event_predictions(snapshots, st.session_state.predictor)
 
+print(
+    f"[STARTUP TIMING] Event predictions and audit: "
+    f"{time.perf_counter() - prediction_timer:.3f}s",
+    flush=True
+)
 # Set default selected event if none
 if (
     st.session_state.selected_event_id is None

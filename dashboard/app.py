@@ -43,6 +43,10 @@ from dashboard.charts import (
     create_error_distribution_chart
 )
 from dashboard.orbital_view import create_orbital_scene
+@st.cache_data(show_spinner="Loading synthetic CDM dataset...")
+def load_synthetic_raw_data():
+    """Load and cache the original synthetic CDM dataset."""
+    return load_raw_cdm_data()
 
 st.set_page_config(
     page_title="ORBIT PULSE | Conjunction Risk Intelligence",
@@ -164,7 +168,7 @@ elif st.session_state.data_mode == "MANUAL / BATCH":
 # Data Loading & Processing Pipeline
 # -------------------------------------------------------------
 def load_and_validate_pipeline(mode: str, replay_idx: int, manual_data=None):
-    raw_df = load_raw_cdm_data()
+    raw_df = load_synthetic_raw_data()
 
     if mode == "REPLAY":
         # Sort chronologically by message_time and take first replay_idx
@@ -467,7 +471,7 @@ elif active_screen == "Live Risk Monitor":
         - **Status**: <span class="badge-live">SIMULATED / VALIDATED</span>
         """, unsafe_allow_html=True)
         if st.session_state.data_mode == "REPLAY":
-            st.info(f"Replay cursor at record {st.session_state.replay_index} of {len(load_raw_cdm_data())}. Use sidebar to step forward.")
+            st.info(f"Replay cursor at record {st.session_state.replay_index} of {len(load_synthetic_raw_data())}. Use sidebar to step forward.")
 
     if not df_event_summaries.empty:
         st.markdown("#### 📈 Dynamic Conjunction Risk Graph")

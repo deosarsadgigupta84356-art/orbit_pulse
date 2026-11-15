@@ -47,6 +47,10 @@ from dashboard.orbital_view import create_orbital_scene
 def load_synthetic_raw_data():
     """Load and cache the original synthetic CDM dataset."""
     return load_raw_cdm_data()
+@st.cache_data(show_spinner=False)
+def get_sorted_synthetic_data(raw_df):
+    """Sort synthetic CDM data chronologically and cache the result."""
+    return raw_df.sort_values("message_time").reset_index(drop=True)
 
 st.set_page_config(
     page_title="ORBIT PULSE | Conjunction Risk Intelligence",
@@ -201,7 +205,7 @@ def load_and_validate_pipeline(mode: str, replay_idx: int, manual_data=None):
 
     if mode == "REPLAY":
         # Sort chronologically by message_time and take first replay_idx
-        df_sorted = raw_df.sort_values("message_time").reset_index(drop=True)
+        df_sorted = get_sorted_synthetic_data(raw_df)
         active_raw = df_sorted.iloc[:max(0, min(replay_idx, len(df_sorted)))].copy()
         feed_time = active_raw["message_time"].iloc[-1] if not active_raw.empty else "NO RECORDS"
     elif mode == "LIVE FEED":

@@ -546,6 +546,9 @@ def render_esa_event_detail(workspace):
             for column in available_columns
         ],
     })
+    details["Selected CDM value"] = details["Selected CDM value"].map(
+      lambda value: "UNKNOWN" if pd.isna(value) else str(value)
+    )
 
     st.dataframe(
         details,

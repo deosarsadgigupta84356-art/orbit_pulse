@@ -770,6 +770,9 @@ elif active_screen == "Evidence & Explanation":
             feature_df = pd.DataFrame(
                 [{"Feature": name, "Value": value} for name, value in feature_values.items()]
             )
+            feature_df["Value"] = feature_df["Value"].map(
+                lambda value: "UNKNOWN" if pd.isna(value) else str(value)
+            )
             st.dataframe(feature_df, hide_index=True, use_container_width=True)
         else:
             st.info("No model feature vector is available because this event is ineligible.")

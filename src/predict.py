@@ -120,38 +120,6 @@ class OrbitPulsePredictor:
         self.dataset_version = self.metadata.get(
             "dataset_version", "UNKNOWN_DATASET_VERSION"
         )
-        # Resolve paths from this source file, never from the shell's current directory.
-        project_root = Path(__file__).resolve().parents[1]
-        model_file = Path(model_path)
-        metadata_file = Path(metadata_path)
-        if not model_file.is_absolute():
-            model_file = project_root / model_file
-        if not metadata_file.is_absolute():
-            metadata_file = project_root / metadata_file
-        if not model_file.is_file():
-            raise FileNotFoundError(
-                f"Trained model artifact is missing: {model_file}. "
-                "Run: python src/train_model.py from the project folder."
-            )
-        if not metadata_file.is_file():
-            raise FileNotFoundError(
-                f"Model metadata is missing: {metadata_file}. "
-                "Restore the matching metadata file or retrain the model."
-            )
-        try:
-            self.model = joblib.load(model_file)
-        except Exception as exc:
-            raise RuntimeError(
-                f"Could not load model artifact '{model_file}': {type(exc).__name__}: {exc}. "
-                "Check the Python/scikit-learn versions and retrain with the installed environment if needed."
-            ) from exc
-        with metadata_file.open("r", encoding="utf-8") as f:
-            self.metadata = json.load(f)
-        if not isinstance(self.metadata.get("feature_names"), list) or not self.metadata["feature_names"]:
-            raise ValueError(f"Invalid or missing feature_names in model metadata: {metadata_file}")
-        self.feature_names = self.metadata["feature_names"]
-        self.model_version = self.metadata.get("model_type", "HistGradientBoostingRegressor_v1.0")
-        self.dataset_version = self.metadata.get("dataset_version", "SYNTHETIC_CDM_FIXTURE_v1.0")
 
     def predict_snapshot(self, snapshot: EventSnapshot48h) -> Dict[str, Any]:
         """

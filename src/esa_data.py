@@ -23,6 +23,9 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ESA_ROOT = PROJECT_ROOT / "data" / "raw" / "esa"
+DEFAULT_PUBLIC_ESA_PATH = (
+    PROJECT_ROOT / "data" / "public" / "esa" / "test_data.csv.gz"
+)
 
 DATASET_SOURCE = "ESA Collision Avoidance Challenge"
 DATASET_URL = "https://zenodo.org/records/4463683"
@@ -201,13 +204,23 @@ def load_esa_test_data(
 ) -> pd.DataFrame:
     """Load public ESA test inputs without accessing private labels."""
 
-    root = Path(data_root) if data_root else DEFAULT_ESA_ROOT
-    path = _find_unique_file(root, "test_data.csv")
+    if data_root is not None:
+        root = Path(data_root)
+        path = _find_unique_file(root, "test_data.csv")
+    else:
+        try:
+            path = _find_unique_file(
+                DEFAULT_ESA_ROOT,
+                "test_data.csv",
+            )
+        except FileNotFoundError:
+            path = DEFAULT_PUBLIC_ESA_PATH
 
     df = pd.read_csv(
         path,
         dtype={"event_id": "string"},
         low_memory=False,
+        compression="infer",
     )
 
     df = _validate_esa_frame(
